@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/candidato.dart';
 
+// Exibição de um candidato na tela principal.
 class CandidatoListItem extends StatelessWidget {
   final Candidato candidato;
 

@@ -3,17 +3,30 @@ import '../models/candidato.dart';
 import 'candidato_detalhes_screen.dart';
 import '../dados/candidatos_dados.dart'; // Certifique-se de que o caminho está correto
 
+List<Candidato> getDeputados() {
+  List<Candidato> deputados = [];
+  deputados.add(cristiane);
+  deputados.add(affonso);
+  return deputados;
+}
+
+// Exibição dos canditados na tela principal.
 class CandidatoScreen extends StatelessWidget {
+  late List<Candidato> listaDeputados;
+
+  CandidatoScreen({required this.listaDeputados});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Candidatos'),
+        title: Text('Deputados'),
       ),
       body: ListView.builder(
-        itemCount: candidatos.length,
+        //itemCount: candidatos.length,
+        itemCount: this.listaDeputados.length,
         itemBuilder: (context, index) {
-          final candidato = candidatos[index];
+          var candidato = this.listaDeputados[index];
           return ListTile(
             title: Text(candidato.nome),
             subtitle: Text('${candidato.cidade} - ${candidato.cargo}'),
@@ -21,7 +34,8 @@ class CandidatoScreen extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => CandidatoDetalhesScreen(candidato: candidato),
+                  builder: (context) =>
+                      CandidatoDetalhesScreen(candidato: candidato),
                 ),
               );
             },

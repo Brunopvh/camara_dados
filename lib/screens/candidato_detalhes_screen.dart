@@ -5,6 +5,7 @@ import 'biografia_detalhes_screen.dart';
 import 'ultimas_noticias_screen.dart'; // Certifique-se de que o caminho está correto
 import 'contatos_detalhes_screen.dart';
 
+// Abrir a janela de detalhes de um canditado.
 class CandidatoDetalhesScreen extends StatelessWidget {
   final Candidato candidato;
 
@@ -45,7 +46,10 @@ class CandidatoDetalhesScreen extends StatelessWidget {
                 Center(
                   child: Text(
                     candidato.nome,
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
+                    style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white),
                   ),
                 ),
                 SizedBox(height: 25.0),
@@ -61,7 +65,8 @@ class CandidatoDetalhesScreen extends StatelessWidget {
                     );
                   },
                   child: Container(
-                    padding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 20.0),
+                    padding:
+                        EdgeInsets.symmetric(vertical: 12.0, horizontal: 20.0),
                     decoration: BoxDecoration(
                       border: Border.all(color: Colors.yellow, width: 2),
                       borderRadius: BorderRadius.circular(25.0),
@@ -69,7 +74,10 @@ class CandidatoDetalhesScreen extends StatelessWidget {
                     ),
                     child: Text(
                       'Biografia',
-                      style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white),
+                      style: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white),
                     ),
                   ),
                 ),
@@ -86,7 +94,8 @@ class CandidatoDetalhesScreen extends StatelessWidget {
                     );
                   },
                   child: Container(
-                    padding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 20.0),
+                    padding:
+                        EdgeInsets.symmetric(vertical: 12.0, horizontal: 20.0),
                     decoration: BoxDecoration(
                       border: Border.all(color: Colors.yellow, width: 2),
                       borderRadius: BorderRadius.circular(25.0),
@@ -94,7 +103,10 @@ class CandidatoDetalhesScreen extends StatelessWidget {
                     ),
                     child: Text(
                       'Contatos',
-                      style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white),
+                      style: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white),
                     ),
                   ),
                 ),
@@ -111,7 +123,8 @@ class CandidatoDetalhesScreen extends StatelessWidget {
                     );
                   },
                   child: Container(
-                    padding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 20.0),
+                    padding:
+                        EdgeInsets.symmetric(vertical: 12.0, horizontal: 20.0),
                     decoration: BoxDecoration(
                       border: Border.all(color: Colors.yellow, width: 2),
                       borderRadius: BorderRadius.circular(25.0),
@@ -119,7 +132,10 @@ class CandidatoDetalhesScreen extends StatelessWidget {
                     ),
                     child: Text(
                       'Últimas Notícias',
-                      style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white),
+                      style: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white),
                     ),
                   ),
                 ),

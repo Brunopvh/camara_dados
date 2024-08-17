@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:projeto_flutter/models/candidato.dart';
 import 'screens/candidato_screen.dart'; // Verifique se o caminho está correto
 
 void main() {
@@ -13,7 +14,9 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: CandidatoScreen(), // Certifique-se de que esta classe está definida e importada corretamente
+      home: CandidatoScreen(
+          listaDeputados:
+              getDeputados()), // Certifique-se de que esta classe está definida e importada corretamente
     );
   }
 }

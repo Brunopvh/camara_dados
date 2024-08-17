@@ -268,54 +268,6 @@ class FindElements extends FindItens {
   FindElements({required super.listItens});
 }
 
-void run() async {
-  printLine();
-
-  PathUtils path_utils = PathUtils();
-  BaseUrls base_urls = BaseUrls();
-  Directory dirTeste =
-      Directory(path_utils.join([getUserDownloads(), 'TESTE-CAMARA']));
-
-  File arquivoProposicoes =
-      new File(path_utils.join([dirTeste.path, 'proposicoes.json']));
-
-  File arquivoAutores =
-      new File(path_utils.join([dirTeste.path, 'proposicoes-autores.json']));
-
-  // Baixar os arquivos.
-  downloadFileSync(base_urls.urlProposicoes(), arquivoProposicoes.path);
-  downloadFileSync(base_urls.urlAutoresProposicoes(), arquivoAutores.path);
-
-  if (!arquivoAutores.existsSync()) {
-    printErro('O arquivo não existe -> ${arquivoAutores.path}');
-    return;
-  }
-
-  if (!arquivoProposicoes.existsSync()) {
-    printErro('O arquivo não existe -> ${arquivoProposicoes.path}');
-    return;
-  }
-
-  // Usar os dados
-  FindItens autores = ProposicoesAutores(arquivoAutores).getFind();
-  FindItens proposicoes = Proposicoes(arquivoProposicoes).getFind();
-  FindElements ro = FindElements(
-      listItens:
-          autores.getMapsInKey(key: 'siglaUFAutor', value: 'RO').listItens);
-
-  File outputFile = File(path_utils.join([dirTeste.path, 'deputados-ro.json']));
-  File arquivoNomes = File(path_utils.join([dirTeste.path, 'nomes.txt']));
-  List<String> nomes = ro.getValuesInKey(key: 'nomeAutor');
-  List<String> exportNomes = [];
-  int max = nomes.length;
-  for (int i = 0; i < max; i++) {
-    if (!exportNomes.contains(nomes[i])) {
-      exportNomes.add(nomes[i]);
-    }
-  }
-
-  exportFile(file: arquivoNomes, textList: exportNomes, replace: true);
-
-  print('OK');
+void run() {
   return;
 }

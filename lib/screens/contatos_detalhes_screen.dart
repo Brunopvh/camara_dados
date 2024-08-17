@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 
+// Exibe o contato de um candidato.
 class ContatosDetalhesScreen extends StatelessWidget {
   final String contatos;
 
@@ -15,7 +16,7 @@ class ContatosDetalhesScreen extends StatelessWidget {
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.pop(context);  // Volta para a tela anterior
+            Navigator.pop(context); // Volta para a tela anterior
           },
         ),
       ),
