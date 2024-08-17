@@ -36,13 +36,16 @@ class CandidatoDetalhesScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
+                // Foto do perfil do candidato.
                 Center(
                   child: CircleAvatar(
                     radius: 80,
                     backgroundImage: AssetImage(candidato.imagemPerfil),
                   ),
                 ),
-                SizedBox(height: 16.0),
+                this.getVoidBox(),
+
+                // Exibição do nome do canditado em texto grande.
                 Center(
                   child: Text(
                     candidato.nome,
@@ -52,7 +55,10 @@ class CandidatoDetalhesScreen extends StatelessWidget {
                         color: Colors.white),
                   ),
                 ),
-                SizedBox(height: 25.0),
+
+                // Biografia do Canditado.
+                //SizedBox(height: 25.0),
+                this.getVoidBox(),
                 GestureDetector(
                   onTap: () {
                     Navigator.push(
@@ -81,7 +87,7 @@ class CandidatoDetalhesScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-                SizedBox(height: 25.0),
+                this.getVoidBox(),
                 GestureDetector(
                   onTap: () {
                     Navigator.push(
@@ -110,7 +116,7 @@ class CandidatoDetalhesScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-                SizedBox(height: 25.0),
+                this.getVoidBox(),
                 GestureDetector(
                   onTap: () {
                     Navigator.push(
@@ -139,6 +145,13 @@ class CandidatoDetalhesScreen extends StatelessWidget {
                     ),
                   ),
                 ),
+                Container(
+                  color: Colors.orangeAccent,
+                  child: TextButton(
+                      onPressed: this.actionBtnTeste,
+                      child: Text('Clique aqui')),
+                ),
+
                 SizedBox(height: 80.0),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -211,5 +224,13 @@ class CandidatoDetalhesScreen extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  void actionBtnTeste() {
+    print('clicou');
+  }
+
+  Widget getVoidBox() {
+    return SizedBox(height: 11.0);
   }
 }
