@@ -1,0 +1,1 @@
+ /home/bruno/GIT/FLUTTER/camara_dados/.dart_tool/flutter_build/a632291e3cd56eb6b43c74b0cd5fd711/native_assets.yaml: 

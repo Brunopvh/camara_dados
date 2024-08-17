@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:projeto_flutter/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../models/candidato.dart';
 import 'biografia_detalhes_screen.dart';
@@ -56,9 +57,8 @@ class CandidatoDetalhesScreen extends StatelessWidget {
                   ),
                 ),
 
-                // Biografia do Canditado.
-                //SizedBox(height: 25.0),
                 this.getVoidBox(),
+                // Biografia do Canditado.
                 GestureDetector(
                   onTap: () {
                     Navigator.push(
@@ -117,6 +117,7 @@ class CandidatoDetalhesScreen extends StatelessWidget {
                   ),
                 ),
                 this.getVoidBox(),
+                // Abrir tela de notícias.
                 GestureDetector(
                   onTap: () {
                     Navigator.push(
@@ -145,17 +146,20 @@ class CandidatoDetalhesScreen extends StatelessWidget {
                     ),
                   ),
                 ),
+                this.getVoidBox(),
+                // Tela de proposições do Deputado.
                 Container(
                   color: Colors.orangeAccent,
                   child: TextButton(
                       onPressed: this.actionBtnTeste,
-                      child: Text('Clique aqui')),
+                      child: Text(getUserDownloads())),
                 ),
 
                 SizedBox(height: 80.0),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
+                    // Abrir o link do Facebook do Deputado.
                     GestureDetector(
                       onTap: () async {
                         if (await canLaunch(candidato.facebookLink)) {
@@ -176,6 +180,8 @@ class CandidatoDetalhesScreen extends StatelessWidget {
                         ),
                       ),
                     ),
+
+                    // Abrir o Link do Instagram do Deputado.
                     GestureDetector(
                       onTap: () async {
                         if (await canLaunch(candidato.instagramLink)) {
@@ -196,6 +202,8 @@ class CandidatoDetalhesScreen extends StatelessWidget {
                         ),
                       ),
                     ),
+
+                    // Abrir o link do Youtube do Deputado.
                     GestureDetector(
                       onTap: () async {
                         if (await canLaunch(candidato.youtubeLink)) {
@@ -226,11 +234,11 @@ class CandidatoDetalhesScreen extends StatelessWidget {
     );
   }
 
-  void actionBtnTeste() {
-    print('clicou');
-  }
-
   Widget getVoidBox() {
     return SizedBox(height: 11.0);
+  }
+
+  void actionBtnTeste() {
+    print('clicou');
   }
 }
