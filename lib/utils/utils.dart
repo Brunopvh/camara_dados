@@ -54,9 +54,13 @@ String getAndroidHomeDir() {
 
   // No Android, utilize getExternalStorageDirectory para obter o diretório externo
   Directory? androidHomeDir;
-  var down = getExternalStorageDirectory().then((value) {
-    androidHomeDir = value;
-  },);
+  try {
+    var down = getExternalStorageDirectory().then((value) {
+      androidHomeDir = value;
+    },);
+  } catch(e){
+    androidHomeDir = Directory('/storage/emulated/0');
+  }
 
   //if (downloadsDirectory == null) {
   //  throw Exception("Não foi possível acessar o diretório de downloads.");

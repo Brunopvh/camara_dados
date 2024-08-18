@@ -58,5 +58,54 @@ Candidato(
     ),
   ],
 ),
+
+  // Dr. Fernando Máximo
+  Candidato(
+    nome: "Dr. Fernando Máximo",
+    cidade: "Porto Velho",
+    cargo: "Deputado Federal",
+    biografia: "-",
+    contatos: "-",
+    facebookLink: "-",
+    instagramLink: "-",
+    youtubeLink: "-",
+    imagemPerfil:
+    'lib/img/ferando_maximo_perfil.jpg', // Caminho da imagem de perfil
+
+    ultimasNoticias: [
+      Noticia(
+        titulo: "",
+        descricao: "-",
+        imagem: 'lib/img/destina.jpg', // Imagem da notícia
+      ),
+
+    ],
+  ),
+
+  // Lucio Mosquini
+  Candidato(
+    nome: "Lucio Mosquini",
+    cidade: "Porto Velho",
+    cargo: "Deputado Federal",
+    biografia: "-",
+    contatos: "dep.luciomosquini@camara.leg.br",
+    facebookLink: "https://www.facebook.com/deputadoluciomosquini/?locale=pt_BR",
+    instagramLink: "https://www.instagram.com/luciomosquini/?hl=pt-br&__coig_challenged=1",
+    youtubeLink: "https://www.youtube.com/@lucioantoniomosquinimosqui7885",
+    imagemPerfil:
+    'lib/img/lucio_mosquini_perfil.jpg', // Caminho da imagem de perfil
+
+    ultimasNoticias: [
+      Noticia(
+        titulo: "",
+        descricao: "-",
+        imagem: 'lib/img/destina.jpg', // Imagem da notícia
+      ),
+
+    ],
+  ),
+
+
+  // C
 ];
 

@@ -80,7 +80,6 @@ ProposicoesAutores getAutores(){
 // Filtrar os dados para exibir no app.
 //========================================================================//
 
-
 class DeputadoProposicao {
   Candidato candidato;
 
