@@ -45,15 +45,16 @@ import 'package:http/http.dart' as http;
 class JsonToMap {
   Future<Map<String, dynamic>> fromUrl(String url) async {
     // Recebe um url de arquivo JSON, baixa o conteúdo e retorna em forma de mapa.
-    Map<String, dynamic> m = {};
+    Map<String, dynamic> m = {'Valor nulo': 'Valor nulo'};
 
     try {
       Future<Response> response = getRequest(url);
       Response r = await response;
       m = jsonDecode(utf8.decode(r.bodyBytes));
+
     } catch (e) {
-      printLine();
       printErro(e.toString());
+      printLine();
       printInfo('Verifique o URL ou sua conexção com a internet.');
       printLine();
     }
@@ -61,8 +62,8 @@ class JsonToMap {
   }
 
   Map<String, dynamic> fromFileName(String filename) {
-    // Recebe o caminho completo de um arquivo JSON no disco e retorna o conteúdo
-    // em forma de mapa.
+    // Recebe o caminho completo de um arquivo JSON no disco 
+    //e retorna o conteúdo em forma de mapa.
     Map<String, dynamic> m = {};
     File f = File(filename);
     if (f.existsSync() == false) {
@@ -70,8 +71,7 @@ class JsonToMap {
       printErro('o arquivo não existe ${filename}');
     } else {
       printInfo('Lendo o arquivo: ${filename}');
-      String content = f.readAsStringSync();
-      m = jsonDecode(content);
+      m = jsonDecode(f.readAsStringSync());
     }
     return m;
   }
@@ -89,8 +89,10 @@ class CamaraJsonUtil {
 
   List<dynamic> getList() {
     // Retorna uma lista bruta com os dados do arquivo.
-    if(!this.fileNameJson.existsSync()){
-      return [{'NULL': 'NULL'}];
+    if (!this.fileNameJson.existsSync()) {
+      return [
+        {'NULL': 'NULL'}
+      ];
     }
     return JsonToMap().fromFileName(this.fileNameJson.path)[this.keyDados];
   }
@@ -165,35 +167,65 @@ class GetDados {
 }
 
 //========================================================================//
-// Dados Proposições
+// Dados Proposições - (proposicoes.json)
 //========================================================================//
 class Proposicoes extends GetDados {
   Proposicoes(super.filePath);
 
-  FindItens proposicoesPorIds({required List<String> idsList}){
-    // Filtra todas as proposições com base nos IDS
-    if(idsList.isEmpty){
-      return FindItens(listItens: [{'NULL': 'Null'}]);
+  FindItens containsEmenta({required String ementa}) {
+    List<Map<String, dynamic>> e = [];
+    List<Map<String, dynamic>> itens = this.getListMap();
+    int maxNum = itens.length;
+
+    if (itens.isEmpty) {
+      return FindItens(listItens: [
+        {'Valor nulo': 'Valor nulo'}
+      ]);
+    }
+
+    for (int i = 0; i < maxNum; i++) {
+      if (itens[i]['ementa'].toString().toUpperCase().contains(ementa.toUpperCase())) {
+        // Observação usar <contains> ao invés de < == >
+        e.add(itens[i]);
+      }
+    }
+
+    return FindItens(listItens: e);
+  }
+
+  FindItens getIds({required List<String> idsList}) {
+    // Filtra todas as proposições com base em uma lista de IDS
+    if (idsList.isEmpty) {
+      return FindItens(listItens: [
+        {'NULL': 'Null'}
+      ]);
     }
     return this.getFind().getMapsFromValues(values: idsList, key: 'id');
   }
 }
 
 //========================================================================//
-// Proposições autores
+// Dados dos Autores - (autores.json)
 //========================================================================//
-class ProposicoesAutores extends GetDados {
-  ProposicoesAutores(super.filePath);
+class AutoresDados extends GetDados {
+  AutoresDados(super.filePath);
 
-  FindItens autorFiltro({required String nomeDeputado}){
+  FindItens filtroUnidadeFederativa({required String uf}) {
+    // Filtrar por Estado.
+    return this.getFind().getMapsInKey(key: 'siglaUFAutor', value: uf);
+  }
+
+  FindItens filtroNomeAutor({required String nomeDeputado}) {
+    // Retorna todos os itens de um deputado com base no nome do deputado.
     return this.getFind().getMapsInKey(key: 'nomeAutor', value: nomeDeputado);
   }
 
-  List<String> proposicoesDeputado({required String nomeDeputado}){
-    // Retorna as proposições de um deputado.
-
-    // Obter os mapas que contém o nome do deputado em seguida retornar todos os IDS das proposições.
-    return this.getFind().getMapsInKey(key: 'nomeAutor', value: nomeDeputado).getValuesInKey(key: 'idProposicao');
+  List<String> filtroIdsProposicoes({required String nomeDeputado}) {
+    // 1-> Filtrar a lista de mapas por nome do deputado
+    // 2-> Filtrar todos os itens da chave/key idProposição do deputado.
+    return this
+        .filtroNomeAutor(nomeDeputado: nomeDeputado)
+        .getValuesInKey(key: 'idProposicao');
   }
 }
 
@@ -223,7 +255,7 @@ class FindItens {
     return _contains;
   }
 
-  List<String> getValuesInKey({required key}) {
+  List<String> getValuesInKey({required String key}) {
     // Retorna os valores dos mapas na chave <key>
     List<String> _itens = [];
     int max = this.listItens.length;

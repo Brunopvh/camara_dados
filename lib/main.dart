@@ -5,7 +5,7 @@ import 'screens/candidato_screen.dart'; // Verifique se o caminho está correto
 import 'package:projeto_flutter/dados/proposicoes_api.dart';
 
 void main() {
-  startApi();
+  startApiFiles();
   runApp(MyApp());
 }
 
