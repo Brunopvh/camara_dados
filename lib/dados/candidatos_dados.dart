@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import '../models/candidato.dart';
 
-// Affonso Candido
-Candidato affonso = Candidato(
+
+List<Candidato> deputados = [
+  Candidato(
   nome: "Affonso Candido",
   cidade: "Ji-Paraná",
   cargo: "Deputado",
@@ -29,10 +30,10 @@ Candidato affonso = Candidato(
   instagramLink: "https://www.instagram.com/affonsocandido",
   youtubeLink: "https://www.youtube.com/@DeputadoPoubel",
   imagemPerfil: 'lib/img/affonso.jpg', // Caminho da imagem de perfil
-);
+),
 
 // Cristiane Lopes
-Candidato cristiane = Candidato(
+Candidato(
   nome: "Cristiane Lopes",
   cidade: "Porto Velho",
   cargo: "Deputada Federal",
@@ -56,4 +57,6 @@ Candidato cristiane = Candidato(
       imagem: 'lib/img/calcario.jpg', // Imagem da notícia
     ),
   ],
-);
+),
+];
+

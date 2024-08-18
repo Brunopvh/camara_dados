@@ -10,11 +10,18 @@ REFERÊNCIAS
 
 */
 
+/*
+Autor - Bruno Chaves
+2024-08
+*/
+
 import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart';
 import 'package:http/http.dart' as http;
 import 'package:archive/archive.dart';
+import 'package:path_provider/path_provider.dart';
+import 'dart:io';
 
 void printLine() {
   print('-------------------------------------------');
@@ -37,6 +44,34 @@ void printMsg(String text) {
 //========================================================================//
 // Retorna o caminho absoluto da pasta HOME do usuário.
 //========================================================================//
+
+String getAndroidHomeDir() {
+  // String? nome;
+  // nome ??= 'Valor padrão';
+  // print(nome); // Saída: Valor padrão
+  //
+  //https://stackoverflow.com/questions/51776109/how-to-get-the-absolute-path-to-the-download-folder
+
+  // No Android, utilize getExternalStorageDirectory para obter o diretório externo
+  Directory? androidHomeDir;
+  var down = getExternalStorageDirectory().then((value) {
+    androidHomeDir = value;
+  },);
+
+  //if (downloadsDirectory == null) {
+  //  throw Exception("Não foi possível acessar o diretório de downloads.");
+  //}
+
+  // Em seguida, acesse o subdiretório "Download"
+  androidHomeDir ??= Directory('/storage/emulated/0');
+  Directory androidHome = androidHomeDir as Directory;
+  if(!androidHome.existsSync()){
+    androidHome.createSync(recursive: true);
+  }
+  return androidHome.path;
+
+}
+
 String getUserHome() {
   var h;
   if (Platform.isMacOS) {
@@ -45,6 +80,8 @@ String getUserHome() {
     h = Platform.environment['HOME'];
   } else if (Platform.isWindows) {
     h = Platform.environment['UserProfile'];
+  } else if (Platform.isAndroid) {
+    h = getAndroidHomeDir();
   } else {
     h = 'não suportado';
   }
@@ -54,7 +91,12 @@ String getUserHome() {
 }
 
 String getUserDownloads() {
-  String d = getUserHome() + Platform.pathSeparator + 'Downloads';
+  String d;
+  if(Platform.isAndroid){
+    d = getUserHome() + Platform.pathSeparator + 'Download';
+  } else {
+    d = getUserHome() + Platform.pathSeparator + 'Downloads';
+  }
   return d;
 }
 
@@ -99,25 +141,6 @@ Future<bool> downloadFile(String url, String filename) async {
   printInfo('Salvando: $filename');
   await file.writeAsBytes(bytes);
   return true;
-}
-
-void __downloadFileSync(String url, String filename) {
-  File file = File(filename);
-  if (file.existsSync()) {
-    printInfo('Arquivo encontrado -> ${file.path}');
-    return;
-  }
-
-  printInfo('Baixando: ${url}');
-  http.Client client = new http.Client();
-  var req = client.get(Uri.parse(url));
-
-  Response r;
-  req.then((value) {
-    printInfo('Salvando: $filename');
-    r = value;
-    file.writeAsBytes(r.bodyBytes);
-  });
 }
 
 void downloadFileSync(String url, String filename) {

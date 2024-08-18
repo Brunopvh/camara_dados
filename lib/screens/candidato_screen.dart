@@ -3,12 +3,6 @@ import '../models/candidato.dart';
 import 'candidato_detalhes_screen.dart';
 import '../dados/candidatos_dados.dart'; // Certifique-se de que o caminho está correto
 
-List<Candidato> getDeputados() {
-  List<Candidato> deputados = [];
-  deputados.add(cristiane);
-  deputados.add(affonso);
-  return deputados;
-}
 
 // Exibição dos canditados na tela principal.
 class CandidatoScreen extends StatelessWidget {

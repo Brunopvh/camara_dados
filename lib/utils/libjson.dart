@@ -21,6 +21,14 @@ uriPropPosterior
 urlInteiroTeor
 ultimoStatus
 
+
+VERSÃO = 2024-08-17
+
+*/
+
+/*
+Autor - Bruno Chaves
+2024-08
 */
 
 import 'dart:async';
@@ -29,23 +37,6 @@ import 'dart:convert';
 import 'package:projeto_flutter/utils/utils.dart';
 import 'package:http/http.dart';
 import 'package:http/http.dart' as http;
-
-//========================================================================//
-// Classe para obter URLs
-//========================================================================//
-class BaseUrls {
-  String urlProposicoes() {
-    return 'https://dadosabertos.camara.leg.br/arquivos/proposicoes/json/proposicoes-2024.json';
-  }
-
-  String urlTemas() {
-    return 'https://dadosabertos.camara.leg.br/arquivos/proposicoesTemas/json/proposicoesTemas-2024.json';
-  }
-
-  String urlAutoresProposicoes() {
-    return 'https://dadosabertos.camara.leg.br/arquivos/proposicoesAutores/json/proposicoesAutores-2024.json';
-  }
-}
 
 //========================================================================//
 // Ao instânciar essa classe você pode obter um Map<> de um conteúdo JSON
@@ -98,6 +89,9 @@ class CamaraJsonUtil {
 
   List<dynamic> getList() {
     // Retorna uma lista bruta com os dados do arquivo.
+    if(!this.fileNameJson.existsSync()){
+      return [{'NULL': 'NULL'}];
+    }
     return JsonToMap().fromFileName(this.fileNameJson.path)[this.keyDados];
   }
 
@@ -175,6 +169,14 @@ class GetDados {
 //========================================================================//
 class Proposicoes extends GetDados {
   Proposicoes(super.filePath);
+
+  FindItens proposicoesPorIds({required List<String> idsList}){
+    // Filtra todas as proposições com base nos IDS
+    if(idsList.isEmpty){
+      return FindItens(listItens: [{'NULL': 'Null'}]);
+    }
+    return this.getFind().getMapsFromValues(values: idsList, key: 'id');
+  }
 }
 
 //========================================================================//
@@ -182,6 +184,17 @@ class Proposicoes extends GetDados {
 //========================================================================//
 class ProposicoesAutores extends GetDados {
   ProposicoesAutores(super.filePath);
+
+  FindItens autorFiltro({required String nomeDeputado}){
+    return this.getFind().getMapsInKey(key: 'nomeAutor', value: nomeDeputado);
+  }
+
+  List<String> proposicoesDeputado({required String nomeDeputado}){
+    // Retorna as proposições de um deputado.
+
+    // Obter os mapas que contém o nome do deputado em seguida retornar todos os IDS das proposições.
+    return this.getFind().getMapsInKey(key: 'nomeAutor', value: nomeDeputado).getValuesInKey(key: 'idProposicao');
+  }
 }
 
 //========================================================================//

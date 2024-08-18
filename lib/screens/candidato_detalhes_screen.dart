@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:projeto_flutter/utils/utils.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -5,6 +7,7 @@ import '../models/candidato.dart';
 import 'biografia_detalhes_screen.dart';
 import 'ultimas_noticias_screen.dart'; // Certifique-se de que o caminho está correto
 import 'contatos_detalhes_screen.dart';
+import 'package:projeto_flutter/screens/candidato_proposicoes.dart';
 
 // Abrir a janela de detalhes de um canditado.
 class CandidatoDetalhesScreen extends StatelessWidget {
@@ -147,12 +150,36 @@ class CandidatoDetalhesScreen extends StatelessWidget {
                   ),
                 ),
                 this.getVoidBox(),
+
                 // Tela de proposições do Deputado.
-                Container(
-                  color: Colors.orangeAccent,
-                  child: TextButton(
-                      onPressed: this.actionBtnTeste,
-                      child: Text(getUserDownloads())),
+                
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => CandidatoProposicoesScreen(
+                            deputado: this.candidato,
+                        ),
+                      ),
+                    );
+                  },
+                  child: Container(
+                    padding:
+                        EdgeInsets.symmetric(vertical: 12.0, horizontal: 20.0),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.yellow, width: 2),
+                      borderRadius: BorderRadius.circular(25.0),
+                      color: Colors.transparent,
+                    ),
+                    child: Text(
+                      'Proposições',
+                      style: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white),
+                    ),
+                  ),
                 ),
 
                 SizedBox(height: 80.0),
@@ -239,6 +266,7 @@ class CandidatoDetalhesScreen extends StatelessWidget {
   }
 
   void actionBtnTeste() {
+    
     print('clicou');
   }
 }
