@@ -38,6 +38,13 @@ import 'package:projeto_flutter/utils/utils.dart';
 import 'package:http/http.dart';
 import 'package:http/http.dart' as http;
 
+Map<String, dynamic> jsonAutores = {};
+Map<String, dynamic> jsonProposicoes = {};
+
+void startApi() async {
+  jsonAutores = JsonToMap().fromUrl(BaseUrls().urlAutoresProposicoes());
+  jsonProposicoes = JsonToMap().fromUrl(BaseUrls().urlProposicoes());
+}
 
 //========================================================================//
 // Classe para obter URLs da API
@@ -61,26 +68,31 @@ class BaseUrls {
 // a fonte pode ser um ARQUIVO local ou um URL.
 //========================================================================//
 class JsonToMap {
+
+  String getOnlineJson(String url){
+    print('REQUEST: ${url}');
+    String e = '{"dados":[{"Chave Nula": "Valor Nulo"}]}';
+    http.get(Uri.parse(url)).then((response) {
+      
+      if (response.statusCode == 200) {
+        // Convertendo o corpo da resposta para String
+        String responseBody = response.body;
+        return responseBody;
+      } else {
+        print('Erro na requisição: ${response.statusCode}');
+      }
+    }).catchError((error) {
+      print('Erro na requisição: $error');
+    });
+
+    return e;
+  }
+
   Map<String, dynamic> fromUrl(String url) {
     // Recebe um url de arquivo JSON, baixa o conteúdo e retorna em forma de mapa.
-    Map<String, dynamic> m = {'dados':[{'Valor nulo': 'Valor nulo'}]};
-    
-    try {
-
-      Future<Response> response = getRequest(url);
-      response.then((value) {
-        m = jsonDecode(utf8.decode(value.bodyBytes));
-      },);
-
-      //m = jsonDecode(utf8.decode(r.bodyBytes));
-
-    } catch (e) {
-      printErro(e.toString());
-      printLine();
-      printInfo('Verifique o URL ou sua conexção com a internet.');
-      printLine();
-    }
-    return m;
+    String dataJson = this.getOnlineJson(url);
+    var _map = jsonDecode(dataJson);
+    return _map as Map<String, dynamic>;
   }
 
   Map<String, dynamic> fromFileName(String filename) {
@@ -112,6 +124,10 @@ class CamaraDadosOnline {
 
   List<dynamic> getList() {
     // Retorna uma lista bruta com os dados do arquivo.
+    if(this.dataBaseMap.isEmpty){
+      return [{'Chave Nula', 'Valor Nulo'}];
+    }
+
     return this.dataBaseMap[this.keyDados];
   }
 
@@ -192,9 +208,7 @@ class Proposicoes extends GetDados {
     int maxNum = itens.length;
 
     if (itens.isEmpty) {
-      return FindItens(listItens: [
-        {'Valor nulo': 'Valor nulo'}
-      ]);
+      return FindItens(listItens: [{'Chave Nula': 'Valor Nulo'}]);
     }
 
     for (int i = 0; i < maxNum; i++) {
@@ -210,9 +224,9 @@ class Proposicoes extends GetDados {
   FindItens getIds({required List<String> idsList}) {
     // Filtra todas as proposições com base em uma lista de IDS
     if (idsList.isEmpty) {
-      return FindItens(listItens: [
-        {'NULL': 'Null'}
-      ]);
+      printLine();
+      printErro('A lista de IDS é nula');
+      return FindItens(listItens: [{'Chave Nula': 'Valor Nulo'}]);
     }
     return this.getFind().getMapsFromValues(values: idsList, key: 'id');
   }
@@ -285,11 +299,11 @@ class FindItens {
     // na chave <key>.
     List<Map<String, dynamic>> list_maps_from_key = [];
     if (this.listItens.isEmpty) {
-      return FindItens(listItens: []);
+      return FindItens(listItens: [{'Chave Nula': 'Valor Nulo'}]);
     }
 
     if (!this.listItens[0].keys.toList().contains(key)) {
-      return FindItens(listItens: []);
+      return FindItens(listItens: [{'Chave Nula': 'Valor Nulo'}]);
     }
 
     int max_num = this.listItens.length;
@@ -324,14 +338,15 @@ class FindItens {
 }
 
 CamaraDadosOnline getProposicoesOnline(){
-  Map<String, dynamic> m = JsonToMap().fromUrl(BaseUrls().urlProposicoes());
-  return CamaraDadosOnline(dataBaseMap: m);
+  //Map<String, dynamic> m = JsonToMap().fromUrl(BaseUrls().urlProposicoes());
+  print(jsonProposicoes);
+  return CamaraDadosOnline(dataBaseMap: jsonProposicoes);
 }
 
 CamaraDadosOnline getAutoresOnline(){
-  Map<String, dynamic> m = JsonToMap().fromUrl(BaseUrls().urlAutoresProposicoes());
-  print(m);
-  return CamaraDadosOnline(dataBaseMap: m);
+  //Map<String, dynamic> mp = JsonToMap().fromUrl(BaseUrls().urlAutoresProposicoes());
+  
+  return CamaraDadosOnline(dataBaseMap: jsonAutores);
 }
 
 void run() {

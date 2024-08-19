@@ -10,21 +10,22 @@ import 'package:projeto_flutter/dados/proposicoes_api.dart';
 class CandidatoProposicoesScreen extends StatelessWidget {
 
   Candidato deputado;
-  List<Proposicao> proposicoes = [];
-  CandidatoProposicoesScreen({required this.deputado}){
-    this.proposicoes = DeputadoProposicao(candidato: this.deputado).proposicoesList();
+  CandidatoProposicoesScreen({required this.deputado});
+
+  List<Proposicao> getProposicoes(){
+    return DeputadoProposicao(candidato: this.deputado).proposicoesList();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('${this.deputado.nome.toUpperCase()} - (${this.proposicoes.length}) proposições'),
+        title: Text('${this.deputado.nome.toUpperCase()} - (${this.getProposicoes().length}) proposições'),
       ),
       body: ListView.builder(
-        itemCount: this.proposicoes.length,
+        itemCount: this.getProposicoes().length,
         itemBuilder: (context, index){
-          final proposicao = this.proposicoes[index];
+          final proposicao = this.getProposicoes()[index];
 
           return Card(
             margin: EdgeInsets.all(10),

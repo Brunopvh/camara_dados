@@ -12,6 +12,9 @@ import 'package:projeto_flutter/models/candidato.dart';
 // INTEGRAÇÃO DA API COM ARQUIVOS LOCAIS
 //========================================================================//
 
+late CamaraDadosOnline autores;
+late CamaraDadosOnline proposicoes;
+
 PathUtils path_utils = PathUtils();
 
 // Arquivos JSON que serão baixados localmente.
@@ -37,7 +40,8 @@ File getFileAutores() {
 //========================================================================//
 // Baixar arquivos JSON localmente.
 //========================================================================//
-bool startApiFiles() {
+void startApiFiles() {
+  /*
   try {
     if (!fileProposicoes.existsSync()) {
       downloadFileSync(BaseUrls().urlAutoresProposicoes(), fileAutores.path);
@@ -50,6 +54,11 @@ bool startApiFiles() {
     return false;
   }
   return true;
+  */
+  startApi();
+  //autores = getAutoresOnline();
+  //proposicoes = getProposicoesOnline();
+
 }
 
 
@@ -65,16 +74,15 @@ Directory getLocalDirCache() {
   return d;
 }
 
-Proposicoes getPropocicoes() {
-  //Proposicoes p = Proposicoes(camaraDados: getProposicoesOnline());
-  Map<String, dynamic> m = JsonToMap().fromFileName(fileProposicoes.path);
-  return Proposicoes(camaraDados: CamaraDadosOnline(dataBaseMap: m));
+Proposicoes getProposicoes() {
+  //Map<String, dynamic> m = JsonToMap().fromFileName(fileProposicoes.path);
+  return Proposicoes(camaraDados: getProposicoesOnline());
 }
 
 AutoresDados getAutores() {
   //Map<String, dynamic> m = JsonToMap().fromUrl(BaseUrls().urlAutoresProposicoes());
-  Map<String, dynamic> m = JsonToMap().fromFileName(fileAutores.path);
-  return AutoresDados(camaraDados: CamaraDadosOnline(dataBaseMap: m));
+  //Map<String, dynamic> m = JsonToMap().fromFileName(fileAutores.path);
+  return AutoresDados(camaraDados: getAutoresOnline());
 }
 
 //========================================================================//
@@ -97,22 +105,39 @@ class DeputadoProposicao {
   }
 
   FindItens proposicoesTodas() {
-    return getPropocicoes().getIds(idsList: this.idsProposicao());
+    return getProposicoes().getIds(idsList: this.idsProposicao());
+  }
+
+  Proposicao getDefaultProposicao(){
+    return Proposicao(
+            id: 'ERRO', 
+            ano: 'ERRO', 
+            descricaoTipo: 'ERRO', 
+            ementa: 'ERRO'
+            );
   }
 
   List<Proposicao> proposicoesList() {
     List<Proposicao> p = [];
     List<Map<String, dynamic>> mp = this.proposicoesTodas().listItens;
     int maxNum = mp.length;
+    
+    try {
+      for (int i = 0; i < maxNum; i++) {
+        p.add(Proposicao(
+            id: mp[i]['id'].toString(),
+            ano: mp[i]['ano'].toString(),
+            descricaoTipo: mp[i]['descricaoTipo'],
+            ementa: mp[i]['ementa']));
+      }
+    } catch(e){
+      print(e.toString());
+      printLine();
+      printErro("Erro ao tentar gerar a lista de proposições");
 
-    for (int i = 0; i < maxNum; i++) {
-      p.add(Proposicao(
-          id: mp[i]['id'].toString(),
-          ano: mp[i]['ano'].toString(),
-          descricaoTipo: mp[i]['descricaoTipo'],
-          ementa: mp[i]['ementa']));
+      p.add(this.getDefaultProposicao());
     }
-
+    
     return p;
   }
 }
