@@ -38,14 +38,6 @@ import 'package:projeto_flutter/utils/utils.dart';
 import 'package:http/http.dart';
 import 'package:http/http.dart' as http;
 
-Map<String, dynamic> jsonAutores = {};
-Map<String, dynamic> jsonProposicoes = {};
-
-void startApi() async {
-  jsonAutores = JsonToMap().fromUrl(BaseUrls().urlAutoresProposicoes());
-  jsonProposicoes = JsonToMap().fromUrl(BaseUrls().urlProposicoes());
-}
-
 //========================================================================//
 // Classe para obter URLs da API
 //========================================================================//
@@ -71,7 +63,7 @@ class JsonToMap {
 
   String getOnlineJson(String url){
     print('REQUEST: ${url}');
-    String e = '{"dados":[{"Chave Nula": "Valor Nulo"}]}';
+    String e = '{}';
     http.get(Uri.parse(url)).then((response) {
       
       if (response.statusCode == 200) {
@@ -111,28 +103,23 @@ class JsonToMap {
   }
 }
 
-//========================================================================//
-// Dados Gerais
-//========================================================================//
 
 class CamaraDadosOnline {
   List<Map<String, dynamic>> _listMap = [];
   Map<String, dynamic> dataBaseMap;
-  String keyDados = 'dados';
+  String keyDados = 'dados'; // Na chave dados estão todos os itens.
 
   CamaraDadosOnline({required this.dataBaseMap});
 
   List<dynamic> getList() {
     // Retorna uma lista bruta com os dados do arquivo.
     if(this.dataBaseMap.isEmpty){
-      return [{'Chave Nula', 'Valor Nulo'}];
+      return [];
     }
-
     return this.dataBaseMap[this.keyDados];
   }
 
   List<Map<String, dynamic>> getListMap() {
-    // Retorna uma lista com mapas dos valores do arquivo.
     if (this._listMap.isEmpty) {
       Map<String, dynamic> _current;
       List<dynamic> get_list = this.getList();
@@ -142,18 +129,20 @@ class CamaraDadosOnline {
         _current = get_list[i];
         this._listMap.add(_current);
       }
+
     }
     return this._listMap;
   }
 
   List<String> getKeys() {
-    // Retorna uma lista de chaves dos mapas.
+    if(this.getListMap().isEmpty){
+      return [];
+    }
     return this.getListMap()[0].keys.toList();
   }
 
   List<String> valuesInKey(String keyName) {
     // Apartir de uma chave/key - retorna todos os valores correspondentes no arquivo JSON.
-
     List<String> _values = [];
     String _current;
     int max = this.getListMap().length;
@@ -337,18 +326,3 @@ class FindItens {
   }
 }
 
-CamaraDadosOnline getProposicoesOnline(){
-  //Map<String, dynamic> m = JsonToMap().fromUrl(BaseUrls().urlProposicoes());
-  print(jsonProposicoes);
-  return CamaraDadosOnline(dataBaseMap: jsonProposicoes);
-}
-
-CamaraDadosOnline getAutoresOnline(){
-  //Map<String, dynamic> mp = JsonToMap().fromUrl(BaseUrls().urlAutoresProposicoes());
-  
-  return CamaraDadosOnline(dataBaseMap: jsonAutores);
-}
-
-void run() {
-  return;
-}

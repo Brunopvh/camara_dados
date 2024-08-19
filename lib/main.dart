@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:projeto_flutter/models/candidato.dart';
 import 'package:projeto_flutter/dados/candidatos_dados.dart';
+import 'package:projeto_flutter/utils/libjson.dart';
 import 'screens/candidato_screen.dart'; // Verifique se o caminho está correto
 import 'package:projeto_flutter/dados/proposicoes_api.dart';
 
 void main() {
+  run();
+}
+
+void run(){
   startApiFiles();
   runApp(MyApp());
 }

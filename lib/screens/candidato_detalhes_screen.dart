@@ -159,7 +159,7 @@ class CandidatoDetalhesScreen extends StatelessWidget {
                       context,
                       MaterialPageRoute(
                         builder: (context) => CandidatoProposicoesScreen(
-                            deputado: this.candidato,
+                            candidato: this.candidato,
                         ),
                       ),
                     );

@@ -3,6 +3,7 @@ Autor - Bruno Chaves
 2024-08
 */
 
+import 'dart:convert';
 import 'dart:io';
 import 'package:projeto_flutter/utils/utils.dart';
 import 'package:projeto_flutter/utils/libjson.dart';
@@ -12,10 +13,7 @@ import 'package:projeto_flutter/models/candidato.dart';
 // INTEGRAÇÃO DA API COM ARQUIVOS LOCAIS
 //========================================================================//
 
-late CamaraDadosOnline autores;
-late CamaraDadosOnline proposicoes;
-
-PathUtils path_utils = PathUtils();
+PathUtils path_utils = PathUtils(); // -> lib/utils.dart
 
 // Arquivos JSON que serão baixados localmente.
 final File fileProposicoes = File(path_utils.join([getLocalDirCache().path, 'proposicoes.json']));
@@ -41,7 +39,7 @@ File getFileAutores() {
 // Baixar arquivos JSON localmente.
 //========================================================================//
 void startApiFiles() {
-  /*
+
   try {
     if (!fileProposicoes.existsSync()) {
       downloadFileSync(BaseUrls().urlAutoresProposicoes(), fileAutores.path);
@@ -51,19 +49,17 @@ void startApiFiles() {
       downloadFileSync(BaseUrls().urlProposicoes(), fileProposicoes.path);
     }
   } catch (e){
-    return false;
+    printLine();
+    print(e);
+    printLine();
   }
-  return true;
-  */
-  startApi();
-  //autores = getAutoresOnline();
-  //proposicoes = getProposicoesOnline();
-
+  
 }
 
 
 //========================================================================//
-// Diretório para baixar arquivos localmente
+// Diretório para baixar arquivos localmente - está setado para usar a pasta
+// Downloads do usuário.
 //========================================================================//
 Directory getLocalDirCache() {
   Directory d = Directory(PathUtils().join([getUserDownloads(), 'dados-camara']));
@@ -74,16 +70,72 @@ Directory getLocalDirCache() {
   return d;
 }
 
-Proposicoes getProposicoes() {
-  //Map<String, dynamic> m = JsonToMap().fromFileName(fileProposicoes.path);
-  return Proposicoes(camaraDados: getProposicoesOnline());
+class BuildDadosAutores {
+
+  String urlAutores = BaseUrls().urlAutoresProposicoes();
+  File filePath = getFileAutores();
+  Map<String, dynamic> _dadosOnline = {};
+
+  BuildDadosAutores();
+
+  Map<String, dynamic> _dadosUrl(){
+    // Retornar os dados usando um URL como fonte.
+    if(this._dadosOnline.isEmpty){
+      this._dadosOnline = JsonToMap().fromUrl(this.urlAutores);
+    }
+    return this._dadosOnline;
+  }
+
+  Map<String, dynamic> _dadosArquivo(){
+    // Retornar os dados usando um ARQUIVO como fonte.
+    Map<String, dynamic> _dados = JsonToMap().fromFileName(this.filePath.path);
+    return _dados;
+  }
+
+  AutoresDados get(){
+    Map<String, dynamic> mp = this._dadosArquivo();
+    return AutoresDados(camaraDados: CamaraDadosOnline(dataBaseMap: mp));
+  }
+
 }
 
-AutoresDados getAutores() {
-  //Map<String, dynamic> m = JsonToMap().fromUrl(BaseUrls().urlAutoresProposicoes());
-  //Map<String, dynamic> m = JsonToMap().fromFileName(fileAutores.path);
-  return AutoresDados(camaraDados: getAutoresOnline());
+
+class BuildProposicoes {
+
+  String urlAutores = BaseUrls().urlProposicoes();
+  File filePath = getFileProposicoes();
+  var _dadosOnline;
+
+  BuildProposicoes();
+
+  String _dadosUrl(){
+    // Retornar os dados usando um URL como fonte.
+    if(this._dadosOnline.isEmpty){
+      this._dadosOnline = JsonToMap().getOnlineJson(this.urlAutores);
+    }
+    return this._dadosOnline as String;
+  }
+
+  String _dadosArquivo(){
+    // Retornar os dados usando um ARQUIVO como fonte.
+    var _dados = jsonDecode(this.filePath.readAsStringSync());
+    return _dados as String;
+  }
+
+  Map<String, dynamic> _getDados(){
+    Map<String, dynamic> m = jsonDecode(this._dadosArquivo());
+    if(m.isEmpty){
+      return {'dados':[]};
+    }
+    return m;
+  }
+
+  Proposicoes get(){
+    return Proposicoes(camaraDados: CamaraDadosOnline(dataBaseMap: this._getDados()));
+  }
+
 }
+
 
 //========================================================================//
 // Filtrar os dados para exibir no app.
@@ -93,20 +145,6 @@ class DeputadoProposicao {
   Candidato candidato;
 
   DeputadoProposicao({required this.candidato});
-
-  FindItens dados() {
-    // retornar todos os dados do deputado no arquivo JSON autores.
-    return getAutores().getFind().getMapsInKey(key: 'nomeAutor', value: this.candidato.nome);
-  }
-
-  List<String> idsProposicao() {
-    // obter os IDS das proposições do deputado.
-    return this.dados().getValuesInKey(key: 'idProposicao');
-  }
-
-  FindItens proposicoesTodas() {
-    return getProposicoes().getIds(idsList: this.idsProposicao());
-  }
 
   Proposicao getDefaultProposicao(){
     return Proposicao(
@@ -118,26 +156,6 @@ class DeputadoProposicao {
   }
 
   List<Proposicao> proposicoesList() {
-    List<Proposicao> p = [];
-    List<Map<String, dynamic>> mp = this.proposicoesTodas().listItens;
-    int maxNum = mp.length;
-    
-    try {
-      for (int i = 0; i < maxNum; i++) {
-        p.add(Proposicao(
-            id: mp[i]['id'].toString(),
-            ano: mp[i]['ano'].toString(),
-            descricaoTipo: mp[i]['descricaoTipo'],
-            ementa: mp[i]['ementa']));
-      }
-    } catch(e){
-      print(e.toString());
-      printLine();
-      printErro("Erro ao tentar gerar a lista de proposições");
-
-      p.add(this.getDefaultProposicao());
-    }
-    
-    return p;
+    return [this.getDefaultProposicao()];
   }
 }
