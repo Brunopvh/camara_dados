@@ -34,29 +34,6 @@ File getFileAutores() {
   return fileAutores;
 }
 
-File getFileAutoresRo(){
-  File f = File(path_utils.join([getLocalDirCache().path, 'autores-ro.json']));
-
-  if(!f.existsSync()){
-    FindItens _a = AutoresDados(getFileAutores()).filtroUnidadeFederativa(uf: 'RO');
-    JsonUtils().exportMapToFile(map: {'dados': _a.listItens}, outputFile: f);
-  }
-
-  return f;
-}
-
-File getFileProposicoesRo(){
-  File fRo = File(path_utils.join([getLocalDirCache().path, 'proposicoes-ro.json']));
-
-  if(!fRo.existsSync()){
-    FindItens _autores = AutoresDados(getFileAutoresRo()).getFind();
-    List<String> _ids = _autores.getValuesInKey(key: 'idProposicao');
-    FindItens p = Proposicoes(getFileProposicoes()).getIds(idsList: _ids);
-    JsonUtils().exportMapToFile(map: {'dados': p.listItens}, outputFile: fRo);
-  }
-  return fRo;
-}
-
 //========================================================================//
 // Baixar arquivos JSON localmente.
 //========================================================================//
@@ -75,22 +52,6 @@ bool startApiFiles() {
   return true;
 }
 
-//========================================================================//
-// Classe para obter URLs da API
-//========================================================================//
-class BaseUrls {
-  String urlProposicoes() {
-    return 'https://dadosabertos.camara.leg.br/arquivos/proposicoes/json/proposicoes-2024.json';
-  }
-
-  String urlTemas() {
-    return 'https://dadosabertos.camara.leg.br/arquivos/proposicoesTemas/json/proposicoesTemas-2024.json';
-  }
-
-  String urlAutoresProposicoes() {
-    return 'https://dadosabertos.camara.leg.br/arquivos/proposicoesAutores/json/proposicoesAutores-2024.json';
-  }
-}
 
 //========================================================================//
 // Diretório para baixar arquivos localmente
@@ -105,11 +66,15 @@ Directory getLocalDirCache() {
 }
 
 Proposicoes getPropocicoes() {
-  return Proposicoes(getFileProposicoesRo());
+  //Proposicoes p = Proposicoes(camaraDados: getProposicoesOnline());
+  Map<String, dynamic> m = JsonToMap().fromFileName(fileProposicoes.path);
+  return Proposicoes(camaraDados: CamaraDadosOnline(dataBaseMap: m));
 }
 
 AutoresDados getAutores() {
-  return AutoresDados(getFileAutoresRo());
+  //Map<String, dynamic> m = JsonToMap().fromUrl(BaseUrls().urlAutoresProposicoes());
+  Map<String, dynamic> m = JsonToMap().fromFileName(fileAutores.path);
+  return AutoresDados(camaraDados: CamaraDadosOnline(dataBaseMap: m));
 }
 
 //========================================================================//
@@ -123,9 +88,7 @@ class DeputadoProposicao {
 
   FindItens dados() {
     // retornar todos os dados do deputado no arquivo JSON autores.
-    return getAutores()
-        .getFind()
-        .getMapsInKey(key: 'nomeAutor', value: this.candidato.nome);
+    return getAutores().getFind().getMapsInKey(key: 'nomeAutor', value: this.candidato.nome);
   }
 
   List<String> idsProposicao() {

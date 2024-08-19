@@ -38,19 +38,41 @@ import 'package:projeto_flutter/utils/utils.dart';
 import 'package:http/http.dart';
 import 'package:http/http.dart' as http;
 
+
+//========================================================================//
+// Classe para obter URLs da API
+//========================================================================//
+class BaseUrls {
+  String urlProposicoes() {
+    return 'https://dadosabertos.camara.leg.br/arquivos/proposicoes/json/proposicoes-2024.json';
+  }
+
+  String urlTemas() {
+    return 'https://dadosabertos.camara.leg.br/arquivos/proposicoesTemas/json/proposicoesTemas-2024.json';
+  }
+
+  String urlAutoresProposicoes() {
+    return 'https://dadosabertos.camara.leg.br/arquivos/proposicoesAutores/json/proposicoesAutores-2024.json';
+  }
+}
+
 //========================================================================//
 // Ao instânciar essa classe você pode obter um Map<> de um conteúdo JSON
 // a fonte pode ser um ARQUIVO local ou um URL.
 //========================================================================//
 class JsonToMap {
-  Future<Map<String, dynamic>> fromUrl(String url) async {
+  Map<String, dynamic> fromUrl(String url) {
     // Recebe um url de arquivo JSON, baixa o conteúdo e retorna em forma de mapa.
-    Map<String, dynamic> m = {'Valor nulo': 'Valor nulo'};
-
+    Map<String, dynamic> m = {'dados':[{'Valor nulo': 'Valor nulo'}]};
+    
     try {
+
       Future<Response> response = getRequest(url);
-      Response r = await response;
-      m = jsonDecode(utf8.decode(r.bodyBytes));
+      response.then((value) {
+        m = jsonDecode(utf8.decode(value.bodyBytes));
+      },);
+
+      //m = jsonDecode(utf8.decode(r.bodyBytes));
 
     } catch (e) {
       printErro(e.toString());
@@ -80,21 +102,17 @@ class JsonToMap {
 //========================================================================//
 // Dados Gerais
 //========================================================================//
-class CamaraJsonUtil {
+
+class CamaraDadosOnline {
   List<Map<String, dynamic>> _listMap = [];
-  File fileNameJson;
+  Map<String, dynamic> dataBaseMap;
   String keyDados = 'dados';
 
-  CamaraJsonUtil({required this.fileNameJson, required this.keyDados});
+  CamaraDadosOnline({required this.dataBaseMap});
 
   List<dynamic> getList() {
     // Retorna uma lista bruta com os dados do arquivo.
-    if (!this.fileNameJson.existsSync()) {
-      return [
-        {'NULL': 'NULL'}
-      ];
-    }
-    return JsonToMap().fromFileName(this.fileNameJson.path)[this.keyDados];
+    return this.dataBaseMap[this.keyDados];
   }
 
   List<Map<String, dynamic>> getListMap() {
@@ -133,32 +151,28 @@ class CamaraJsonUtil {
   }
 }
 
+
 class GetDados {
   List<Map<String, dynamic>> _listMap = [];
-  File filePath;
-  late CamaraJsonUtil camaraJsonUtil;
-
-  GetDados(this.filePath) {
-    // Criar o objeto para análise e obtenção dos dados apartir de um arquivo JSON qualquer.
-    this.camaraJsonUtil =
-        CamaraJsonUtil(fileNameJson: this.filePath, keyDados: 'dados');
-  }
+  CamaraDadosOnline camaraDados;
+  
+  GetDados({required this.camaraDados});
 
   List<dynamic> getList() {
-    return this.camaraJsonUtil.getList();
+    return this.camaraDados.getList();
   }
 
   List<Map<String, dynamic>> getListMap() {
-    return this.camaraJsonUtil.getListMap();
+    return this.camaraDados.getListMap();
   }
 
   List<String> getKeys() {
-    return this.camaraJsonUtil.getKeys();
+    return this.camaraDados.getKeys();
   }
 
   List<String> valuesInKey(String keyName) {
     // Apartir de uma chave/key - retorna todos os valores correspondentes no arquivo JSON.
-    return this.camaraJsonUtil.valuesInKey(keyName);
+    return this.camaraDados.valuesInKey(keyName);
   }
 
   FindItens getFind() {
@@ -170,7 +184,7 @@ class GetDados {
 // Dados Proposições - (proposicoes.json)
 //========================================================================//
 class Proposicoes extends GetDados {
-  Proposicoes(super.filePath);
+  Proposicoes({required super.camaraDados});
 
   FindItens containsEmenta({required String ementa}) {
     List<Map<String, dynamic>> e = [];
@@ -208,7 +222,7 @@ class Proposicoes extends GetDados {
 // Dados dos Autores - (autores.json)
 //========================================================================//
 class AutoresDados extends GetDados {
-  AutoresDados(super.filePath);
+  AutoresDados({required super.camaraDados});
 
   FindItens filtroUnidadeFederativa({required String uf}) {
     // Filtrar por Estado.
@@ -309,8 +323,15 @@ class FindItens {
   }
 }
 
-class FindElements extends FindItens {
-  FindElements({required super.listItens});
+CamaraDadosOnline getProposicoesOnline(){
+  Map<String, dynamic> m = JsonToMap().fromUrl(BaseUrls().urlProposicoes());
+  return CamaraDadosOnline(dataBaseMap: m);
+}
+
+CamaraDadosOnline getAutoresOnline(){
+  Map<String, dynamic> m = JsonToMap().fromUrl(BaseUrls().urlAutoresProposicoes());
+  print(m);
+  return CamaraDadosOnline(dataBaseMap: m);
 }
 
 void run() {
