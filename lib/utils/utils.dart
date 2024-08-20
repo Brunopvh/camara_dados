@@ -20,8 +20,6 @@ import 'dart:io';
 import 'package:http/http.dart';
 import 'package:http/http.dart' as http;
 import 'package:archive/archive.dart';
-import 'package:path_provider/path_provider.dart';
-import 'dart:io';
 
 void printLine() {
   print('-------------------------------------------');
@@ -46,30 +44,7 @@ void printMsg(String text) {
 //========================================================================//
 
 String getAndroidHomeDir() {
-  // String? nome;
-  // nome ??= 'Valor padrão';
-  // print(nome); // Saída: Valor padrão
-  //
-  //https://stackoverflow.com/questions/51776109/how-to-get-the-absolute-path-to-the-download-folder
-
-  // No Android, utilize getExternalStorageDirectory para obter o diretório externo
-  Directory? androidHomeDir;
-  try {
-    var down = getExternalStorageDirectory().then(
-      (value) {
-        androidHomeDir = value;
-      },
-    );
-  } catch (e) {
-    androidHomeDir = Directory('/storage/emulated/0');
-  }
-
-  //if (downloadsDirectory == null) {
-  //  throw Exception("Não foi possível acessar o diretório de downloads.");
-  //}
-
-  // Em seguida, acesse o subdiretório "Download"
-  androidHomeDir ??= Directory('/storage/emulated/0');
+  Directory androidHomeDir = Directory('/storage/emulated/0');
   Directory androidHome = androidHomeDir as Directory;
   if (!androidHome.existsSync()) {
     androidHome.createSync(recursive: true);
@@ -88,7 +63,7 @@ String getUserHome() {
   } else if (Platform.isAndroid) {
     h = getAndroidHomeDir();
   } else {
-    h = 'não suportado';
+    h = 'não sulibjson/libjson.dartportado';
   }
 
   //Directory d = Directory.fromUri(Uri.directory(h));
@@ -106,9 +81,21 @@ String getUserDownloads() {
 }
 
 String getTempDir() {
-  String tmpDir =
-      Directory.systemTemp.path + Platform.pathSeparator + 'tmp_dir';
-  return tmpDir;
+  Directory d = Directory.systemTemp.createTempSync();
+  if(!d.existsSync()){
+    d.createSync(recursive: true);
+  }
+
+  return d.path;
+}
+
+Directory getTemporaryDirectory(){
+  Directory d = Directory.systemTemp.createTempSync();
+  if(!d.existsSync()){
+    d.createSync(recursive: true);
+  }
+
+  return d;
 }
 
 void createDir(String dir) {
@@ -146,6 +133,19 @@ void downloadFileSync(String url, String filename) {
         printInfo('Salvando arquivo: ${filename}'),
         f.writeAsBytesSync(value.bodyBytes),
       });
+}
+
+void download({required String url, required File filePath}) async {
+  if (filePath.existsSync()) {
+    printInfo('O arquivo já existe: ${filePath.path}');
+    return;
+  }
+
+  printInfo('Baixando: ${url}');
+  Future<Response> response = http.get(Uri.parse(url));
+  Response resp = await response;
+  printInfo('Salvando arquivo: ${filePath.path}');
+  filePath.writeAsBytesSync(resp.bodyBytes);
 }
 
 //========================================================================//

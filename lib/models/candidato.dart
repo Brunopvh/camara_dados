@@ -35,14 +35,3 @@ class Candidato {
     required this.imagemPerfil,
   });
 }
-
-class Proposicao {
-  final String id;
-  final String ano;
-  final String descricaoTipo;
-  final String ementa;
-
-  Proposicao({required this.id, required this.ano, required this.descricaoTipo, required this.ementa});
-
-
-}

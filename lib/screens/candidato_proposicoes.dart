@@ -6,26 +6,27 @@ Autor - Bruno Chaves
 import 'package:flutter/material.dart';
 import '../models/candidato.dart';
 import 'package:projeto_flutter/dados/proposicoes_api.dart';
+import 'package:projeto_flutter/utils/models_dados.dart';
 
 class CandidatoProposicoesScreen extends StatelessWidget {
 
   Candidato candidato;
   CandidatoProposicoesScreen({required this.candidato});
 
-  List<Proposicao> getProposicoes(){
-    return DeputadoProposicao(candidato: this.candidato).proposicoesList();
+  List<Ementa> getEmentasCandidato(){
+    return CandidatoEmentas(candidato: this.candidato).candidatoListEmentas();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('${this.candidato.nome.toUpperCase()} - (${this.getProposicoes().length}) proposições'),
+        title: Text('${this.candidato.nome.toUpperCase()} - (${this.getEmentasCandidato().length}) Ementas'),
       ),
       body: ListView.builder(
-        itemCount: this.getProposicoes().length,
+        itemCount: this.getEmentasCandidato().length,
         itemBuilder: (context, index){
-          final proposicao = this.getProposicoes()[index];
+          final ementa = this.getEmentasCandidato()[index];
 
           return Card(
             margin: EdgeInsets.all(10),
@@ -35,7 +36,7 @@ class CandidatoProposicoesScreen extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Text(
-                    'ID - ${proposicao.id}',
+                    'ID - ${ementa.getEmentaId()}',
                     style: TextStyle(
                       fontSize: 16, // Tamanho do texto
                     ),
@@ -45,7 +46,7 @@ class CandidatoProposicoesScreen extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Text(
-                    proposicao.descricaoTipo,
+                    ementa.getDescricao(),
                     style: TextStyle(
                       fontSize: 20, // Tamanho do texto
                       fontWeight: FontWeight.bold, // Negrito
@@ -56,7 +57,7 @@ class CandidatoProposicoesScreen extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Text(
-                    proposicao.ementa,
+                    ementa.getEmentaNome(),
                     style: TextStyle(
                       fontSize: 16, // Tamanho do texto
                     ),
