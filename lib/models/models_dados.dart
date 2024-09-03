@@ -7,7 +7,20 @@ import 'package:projeto_flutter/utils/libjson.dart';
 import 'package:projeto_flutter/utils/utils.dart';
 
 //Directory cacheDir = Directory(PathUtils().join([getUserDownloads(), 'dados-camara']));
-Directory cacheDir = Directory(PathUtils().join([getTempDir(), 'dados-camara']));
+
+Directory _getDirCache(){
+  var _d;
+  if (Platform.isAndroid) {
+    _d = Directory(PathUtils().join([getTempDir(), 'dados-camara']));
+  } else {
+    _d = Directory(PathUtils().join([getUserDownloads(), 'dados-camara']));
+  }
+
+  return _d as Directory;
+
+}
+
+Directory cacheDir = _getDirCache();
 
 String baseEmentas(){
   return PathUtils().join([cacheDir.path, 'ementas.json']);
