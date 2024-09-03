@@ -5,7 +5,7 @@ Autor - Bruno Chaves
 
 import 'dart:convert';
 import 'dart:io';
-import 'package:projeto_flutter/utils/models_dados.dart';
+import 'package:projeto_flutter/models/models_dados.dart';
 import 'package:projeto_flutter/utils/libjson.dart';
 import 'package:projeto_flutter/models/candidato.dart';
 
@@ -21,6 +21,9 @@ class BuildDadosAutores {
   BuildDadosAutores();
 
   DadosAutor create(){
+    if(!File(baseAutores()).existsSync()){
+      return DadosAutor(dados: DadosCamara(dadosCamara: {}));
+    }
     return DadosAutor(dados: DadosCamara(dadosCamara: GetJson().fromFileName(this.filePath.path)));
   }
 }
@@ -33,6 +36,9 @@ class BuildDadosEmentas {
   BuildDadosEmentas();
 
   DadosEmenta create(){
+    if(!File(baseEmentas()).existsSync()){
+      return DadosEmenta(dados: DadosCamara(dadosCamara: {}));
+    }
     return DadosEmenta(dados: DadosCamara(dadosCamara: GetJson().fromFileName(this.filePath.path)));
   }
 }

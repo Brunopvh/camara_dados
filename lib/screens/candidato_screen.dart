@@ -1,11 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:projeto_flutter/screens/candidato_proposicoes.dart';
 import '../models/candidato.dart';
 import 'candidato_detalhes_screen.dart';
 import '../dados/candidatos_dados.dart'; // Certifique-se de que o caminho está correto
 
+class MyHomePage extends StatefulWidget {
+  List<Candidato> candidatos;
+
+  MyHomePage({super.key, required this.candidatos});
+
+  @override
+  State<MyHomePage> createState() => CandidatoScreen(listaDeputados: this.candidatos);
+}
+
 
 // Exibição dos canditados na tela principal.
-class CandidatoScreen extends StatelessWidget {
+class CandidatoScreen extends State<MyHomePage> {
   late List<Candidato> listaDeputados;
 
   CandidatoScreen({required this.listaDeputados});
@@ -14,7 +24,7 @@ class CandidatoScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Deputados'),
+        title: Text('Página Inicial'),
       ),
       body: ListView.builder(
         //itemCount: candidatos.length,
@@ -30,6 +40,7 @@ class CandidatoScreen extends StatelessWidget {
                 MaterialPageRoute(
                   builder: (context) =>
                       CandidatoDetalhesScreen(candidato: candidato),
+                      
                 ),
               );
             },

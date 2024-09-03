@@ -158,9 +158,9 @@ class CandidatoDetalhesScreen extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => CandidatoProposicoesScreen(
-                            candidato: this.candidato,
-                        ),
+                        builder: (context) { 
+                          return CandidatoProposicoesScreen(candidato: this.candidato,);
+                        }
                       ),
                     );
                   },

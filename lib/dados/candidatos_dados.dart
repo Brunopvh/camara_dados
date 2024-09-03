@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/candidato.dart';
 
-
 List<Candidato> deputados = [
   Candidato(
   nome: "Affonso Candido",

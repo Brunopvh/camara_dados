@@ -34,7 +34,7 @@ Autor - Bruno Chaves
 import 'dart:async';
 import 'dart:io';
 import 'dart:convert';
-import 'package:projeto_flutter/utils/models_dados.dart';
+import 'package:projeto_flutter/models/models_dados.dart';
 import 'package:projeto_flutter/utils/utils.dart';
 import 'package:http/http.dart';
 import 'package:http/http.dart' as http;
@@ -112,9 +112,10 @@ class DadosCamara {
   List<dynamic> getList(){
     List<dynamic> d = [];
 
-    if(!this.dadosCamara.isEmpty){
-      d = this.dadosCamara['dados'];
+    if(this.dadosCamara.isEmpty){
+      return d;
     }
+    d = this.dadosCamara['dados'];
     return d;
   }
 
@@ -167,6 +168,10 @@ class DadosEmenta {
   }
 
   List<String> getIds(){
+    if (this.ementas.isEmpty){
+      return [];
+    }
+
     List<String> ids = [];
     int max = this.ementas.length;
     for(int i=0; i<max; i++){
@@ -176,7 +181,17 @@ class DadosEmenta {
     return ids;
   }
 
+  List<Ementa> nullEmentas(){
+    return [
+      Ementa(ementaItens: {}),
+    ];
+  }
+
   List<Ementa> getEmentas({required List<String> ids}){
+    if(this.ementas.isEmpty){
+      return this.nullEmentas();
+    }
+
     List<Ementa> ementas = [];
     String currentId;
     int maxNumIds = ids.length;
@@ -251,9 +266,5 @@ class DadosAutor {
     }
     return ids;
   }
-
-}
-
-void run() async {
 
 }
